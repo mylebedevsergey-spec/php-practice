@@ -1,5 +1,4 @@
 <?php
-// Глухая бабушка. Читает строки из консоли и отвечает по правилам задания.
 
 function grannyYear(): int
 {
@@ -13,7 +12,6 @@ function yearAnswer(): string
 
 function isFarewell(string $phrase): bool
 {
-    // Считаем прощанием только строку, где ровно одно «ПОКА!», без лишних слов.
     return mb_strtoupper($phrase) === 'ПОКА!';
 }
 
@@ -36,12 +34,10 @@ function run(): void
                 fwrite(STDOUT, "ДО СВИДАНИЯ, МИЛЫЙ!\n");
                 return;
             }
-            // Бабушка делает вид, что не расслышала, и продолжает ворчать про год.
             fwrite(STDOUT, yearAnswer() . "\n");
             continue;
         }
 
-        // Любая другая строка сбрасывает счёт прощаний, даже если в ней три «пока!».
         $farewells = 0;
 
         if (mb_substr($phrase, -1) === '!') {
