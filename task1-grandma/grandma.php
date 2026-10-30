@@ -1,18 +1,25 @@
 <?php
+// Глухая бабушка. Читает строки из консоли и отвечает по правилам задания.
 
-function granny_year(): int
+function grannyYear(): int
 {
     return random_int(1930, 1950);
 }
 
-function yell_year_answer(): string
+function yearAnswer(): string
 {
-    return 'НЕТ, НИ РАЗУ С ' . granny_year() . ' ГОДА!';
+    return 'НЕТ, НИ РАЗУ С ' . grannyYear() . ' ГОДА!';
+}
+
+function isFarewell(string $phrase): bool
+{
+    // Считаем прощанием только строку, где ровно одно «ПОКА!», без лишних слов.
+    return mb_strtoupper($phrase) === 'ПОКА!';
 }
 
 function run(): void
 {
-    $farewellCount = 0;
+    $farewells = 0;
 
     fwrite(STDOUT, "ЧЕГО СКАЗАТЬ-ТО ХОТЕЛ, МИЛОК?!\n");
 
@@ -23,33 +30,26 @@ function run(): void
             continue;
         }
 
-        // «ПОКА!» три раза подряд, только если каждая строка ровно «ПОКА!»
-        if ($phrase === 'ПОКА!') {
-            $farewellCount++;
-            if ($farewellCount >= 3) {
+        if (isFarewell($phrase)) {
+            $farewells++;
+            if ($farewells >= 3) {
                 fwrite(STDOUT, "ДО СВИДАНИЯ, МИЛЫЙ!\n");
                 return;
             }
-
-            // бабушка притворяется, что не расслышала
-            fwrite(STDOUT, "АСЬ?! ГОВОРИ ГРОМЧЕ, ВНУЧЕК!\n");
+            // Бабушка делает вид, что не расслышала, и продолжает ворчать про год.
+            fwrite(STDOUT, yearAnswer() . "\n");
             continue;
         }
 
-        // любая другая фраза сбрасывает счётчик прощаний
-        $farewellCount = 0;
+        // Любая другая строка сбрасывает счёт прощаний, даже если в ней три «пока!».
+        $farewells = 0;
 
-        $isShout = mb_substr($phrase, -1) === '!';
-
-        if ($isShout) {
-            fwrite(STDOUT, yell_year_answer() . "\n");
+        if (mb_substr($phrase, -1) === '!') {
+            fwrite(STDOUT, yearAnswer() . "\n");
         } else {
             fwrite(STDOUT, "АСЬ?! ГОВОРИ ГРОМЧЕ, ВНУЧЕК!\n");
         }
     }
-
-    // поток ввода закончился, не дождавшись трёх «ПОКА!»
-    fwrite(STDOUT, "АСЬ?! ТЫ КУДА ПРОПАЛ-ТО, ВНУЧЕК?!\n");
 }
 
 run();
